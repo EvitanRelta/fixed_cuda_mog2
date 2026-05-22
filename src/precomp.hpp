@@ -47,7 +47,10 @@
 
 #include "opencv2/cudabgsegm.hpp"
 
-#include "opencv2/core/private.cuda.hpp"
+#include "opencv2/core.hpp"
+#include "opencv2/core/cuda.hpp"
+#include "opencv2/core/cuda/common.hpp"
+#include "opencv2/core/cuda_stream_accessor.hpp"
 
 #include "opencv2/opencv_modules.hpp"
 
