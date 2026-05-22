@@ -118,6 +118,12 @@ CV_EXPORTS_W Ptr<cuda::BackgroundSubtractorMOG>
     createBackgroundSubtractorMOG(int history = 200, int nmixtures = 5,
                                   double backgroundRatio = 0.7, double noiseSigma = 0);
 
+//! @}
+
+}} // namespace cv { namespace cuda {
+
+namespace custom_mog2 {
+
 ////////////////////////////////////////////////////
 // MOG2
 
@@ -135,14 +141,14 @@ public:
     using cv::BackgroundSubtractorMOG2::apply;
     using cv::BackgroundSubtractorMOG2::getBackgroundImage;
 
-    CV_WRAP virtual void apply(InputArray image, OutputArray fgmask, double learningRate, Stream& stream) = 0;
+    CV_WRAP virtual void apply(cv::InputArray image, cv::OutputArray fgmask, double learningRate, cv::cuda::Stream& stream) = 0;
 
-    CV_WRAP virtual void apply(InputArray image, InputArray knownForegroundMask, OutputArray fgmask, double learningRate, Stream& stream) = 0;
+    CV_WRAP virtual void apply(cv::InputArray image, cv::InputArray knownForegroundMask, cv::OutputArray fgmask, double learningRate, cv::cuda::Stream& stream) = 0;
 
-    virtual void getBackgroundImage(OutputArray backgroundImage, Stream& stream) const = 0;
+    virtual void getBackgroundImage(cv::OutputArray backgroundImage, cv::cuda::Stream& stream) const = 0;
 
-    CV_WRAP inline void getBackgroundImage(CV_OUT GpuMat &backgroundImage, Stream& stream) {
-        getBackgroundImage(OutputArray(backgroundImage), stream);
+    CV_WRAP inline void getBackgroundImage(CV_OUT cv::cuda::GpuMat &backgroundImage, cv::cuda::Stream& stream) {
+        getBackgroundImage(cv::OutputArray(backgroundImage), stream);
     }
 };
 
@@ -155,12 +161,10 @@ affect the background update.
 @param detectShadows If true, the algorithm will detect shadows and mark them. It decreases the
 speed a bit, so if you do not need this feature, set the parameter to false.
  */
-CV_EXPORTS_W Ptr<cuda::BackgroundSubtractorMOG2>
+CV_EXPORTS_W cv::Ptr<BackgroundSubtractorMOG2>
     createBackgroundSubtractorMOG2(int history = 500, double varThreshold = 16,
                                    bool detectShadows = true);
 
-//! @}
-
-}} // namespace cv { namespace cuda {
+} // namespace custom_mog2
 
 #endif /* OPENCV_CUDABGSEGM_HPP */

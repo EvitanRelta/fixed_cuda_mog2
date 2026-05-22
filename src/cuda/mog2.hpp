@@ -10,11 +10,10 @@
 struct CUstream_st;
 typedef struct CUstream_st *cudaStream_t;
 
-namespace cv { namespace cuda {
+namespace custom_mog2 { namespace device { namespace mog2 {
 
-class Stream;
-
-namespace device { namespace mog2 {
+using cv::cuda::PtrStepSzb;
+using cv::cuda::PtrStepSzf;
 
 typedef struct
 {
@@ -32,6 +31,6 @@ typedef struct
 void mog2_gpu(PtrStepSzb frame, int cn, PtrStepSzb fgmask, PtrStepSzb modesUsed, PtrStepSzf weight, PtrStepSzf variance, PtrStepSzb mean, float alphaT, float prune, bool detectShadows, const Constants *const constants, cudaStream_t stream);
 void getBackgroundImage2_gpu(int cn, PtrStepSzb modesUsed, PtrStepSzf weight, PtrStepSzb mean, PtrStepSzb dst, const Constants *const constants, cudaStream_t stream);
 
-} } } }
+} } }
 
 #endif /* OPENCV_CUDA_MOG2_H */

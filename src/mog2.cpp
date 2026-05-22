@@ -46,14 +46,14 @@
 
 using namespace cv;
 using namespace cv::cuda;
-using namespace cv::cuda::device::mog2;
+using namespace custom_mog2::device::mog2;
 
 #if !defined HAVE_CUDA || defined(CUDA_DISABLER)
 
-Ptr<cuda::BackgroundSubtractorMOG2> cv::cuda::createBackgroundSubtractorMOG2(int, double, bool)
+Ptr<custom_mog2::BackgroundSubtractorMOG2> custom_mog2::createBackgroundSubtractorMOG2(int, double, bool)
 {
     throw_no_cuda();
-    return Ptr<cuda::BackgroundSubtractorMOG2>();
+    return Ptr<custom_mog2::BackgroundSubtractorMOG2>();
 }
 
 #else
@@ -75,7 +75,7 @@ const float defaultCT = 0.05f;                // complexity reduction prior cons
 const unsigned char defaultShadowValue = 127; // value to use in the segmentation mask for shadows, set 0 not to do shadow detection
 const float defaultShadowThreshold = 0.5f;    // Tau - shadow threshold, see the paper for explanation
 
-class MOG2Impl CV_FINAL : public cuda::BackgroundSubtractorMOG2
+class MOG2Impl CV_FINAL : public custom_mog2::BackgroundSubtractorMOG2
 {
 public:
     MOG2Impl(int history, double varThreshold, bool detectShadows);
@@ -196,7 +196,7 @@ void MOG2Impl::apply(InputArray _image, InputArray _knownForegroundMask, OutputA
 
 void MOG2Impl::apply(InputArray _frame, OutputArray _fgmask, double learningRate, Stream &stream)
 {
-    using namespace cv::cuda::device::mog2;
+    using namespace custom_mog2::device::mog2;
 
     GpuMat frame = _frame.getGpuMat();
 
@@ -226,7 +226,7 @@ void MOG2Impl::getBackgroundImage(OutputArray backgroundImage) const
 
 void MOG2Impl::getBackgroundImage(OutputArray _backgroundImage, Stream &stream) const
 {
-    using namespace cv::cuda::device::mog2;
+    using namespace custom_mog2::device::mog2;
 
     _backgroundImage.create(frameSize_, frameType_);
     GpuMat backgroundImage = _backgroundImage.getGpuMat();
@@ -236,7 +236,7 @@ void MOG2Impl::getBackgroundImage(OutputArray _backgroundImage, Stream &stream) 
 
 void MOG2Impl::initialize(cv::Size frameSize, int frameType, Stream &stream)
 {
-    using namespace cv::cuda::device::mog2;
+    using namespace custom_mog2::device::mog2;
 
     CV_Assert(frameType == CV_8UC1 || frameType == CV_8UC3 || frameType == CV_8UC4);
 
@@ -263,7 +263,7 @@ void MOG2Impl::initialize(cv::Size frameSize, int frameType, Stream &stream)
 }
 } // namespace
 
-Ptr<cuda::BackgroundSubtractorMOG2> cv::cuda::createBackgroundSubtractorMOG2(int history, double varThreshold, bool detectShadows)
+Ptr<custom_mog2::BackgroundSubtractorMOG2> custom_mog2::createBackgroundSubtractorMOG2(int history, double varThreshold, bool detectShadows)
 {
     return makePtr<MOG2Impl>(history, varThreshold, detectShadows);
 }

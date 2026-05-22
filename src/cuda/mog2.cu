@@ -49,14 +49,15 @@
 
 #include "mog2.hpp"
 
-namespace cv
-{
-namespace cuda
+namespace custom_mog2
 {
 namespace device
 {
 namespace mog2
 {
+using namespace cv::cuda;
+using namespace cv::cuda::device;
+
 ///////////////////////////////////////////////////////////////
 // Utility
 
@@ -412,7 +413,6 @@ void getBackgroundImage2_gpu(int cn, PtrStepSzb modesUsed, PtrStepSzf weight, Pt
 }
 } // namespace mog2
 } // namespace device
-} // namespace cuda
-} // namespace cv
+} // namespace custom_mog2
 
 #endif /* CUDA_DISABLER */
