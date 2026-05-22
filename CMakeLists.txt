@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.18)
+cmake_minimum_required(VERSION 3.16)
 
 project(mog2_cuda_fix LANGUAGES CXX CUDA)
 
@@ -12,7 +12,7 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS
     ON
     CACHE BOOL "Generate compile_commands.json file" FORCE)
 
-find_package(CUDAToolkit REQUIRED)
+find_package(CUDA REQUIRED)
 find_package(OpenCV REQUIRED COMPONENTS core video cudaarithm)
 
 add_library(mog2_cuda STATIC
@@ -27,12 +27,13 @@ target_include_directories(mog2_cuda
         src/include
     PRIVATE
         src
+        ${CUDA_INCLUDE_DIRS}
 )
 
 target_link_libraries(mog2_cuda
     PUBLIC
         ${OpenCV_LIBS}
-        CUDA::cudart
+        ${CUDA_LIBRARIES}
 )
 
 set_target_properties(mog2_cuda PROPERTIES
