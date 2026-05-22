@@ -94,25 +94,31 @@ public:
     void setHistory(int history) CV_OVERRIDE { history_ = history; }
 
     int getNMixtures() const CV_OVERRIDE { return constantsHost_.nmixtures_; }
-    void setNMixtures(int nmixtures) CV_OVERRIDE { constantsHost_.nmixtures_ = nmixtures; }
+    void setNMixtures(int nmixtures) CV_OVERRIDE
+    {
+        if (frameSize_.area() > 0)
+            CV_Error(Error::StsError, "setNMixtures cannot be called after MOG2 initialization");
+        constantsHost_.nmixtures_ = nmixtures;
+        constantsDirty_ = true;
+    }
 
     double getBackgroundRatio() const CV_OVERRIDE { return constantsHost_.TB_; }
-    void setBackgroundRatio(double ratio) CV_OVERRIDE { constantsHost_.TB_ = (float)ratio; }
+    void setBackgroundRatio(double ratio) CV_OVERRIDE { constantsHost_.TB_ = (float)ratio; constantsDirty_ = true; }
 
     double getVarThreshold() const CV_OVERRIDE { return constantsHost_.Tb_; }
-    void setVarThreshold(double varThreshold) CV_OVERRIDE { constantsHost_.Tb_ = (float)varThreshold; }
+    void setVarThreshold(double varThreshold) CV_OVERRIDE { constantsHost_.Tb_ = (float)varThreshold; constantsDirty_ = true; }
 
     double getVarThresholdGen() const CV_OVERRIDE { return constantsHost_.Tg_; }
-    void setVarThresholdGen(double varThresholdGen) CV_OVERRIDE { constantsHost_.Tg_ = (float)varThresholdGen; }
+    void setVarThresholdGen(double varThresholdGen) CV_OVERRIDE { constantsHost_.Tg_ = (float)varThresholdGen; constantsDirty_ = true; }
 
     double getVarInit() const CV_OVERRIDE { return constantsHost_.varInit_; }
-    void setVarInit(double varInit) CV_OVERRIDE { constantsHost_.varInit_ = (float)varInit; }
+    void setVarInit(double varInit) CV_OVERRIDE { constantsHost_.varInit_ = (float)varInit; constantsDirty_ = true; }
 
     double getVarMin() const CV_OVERRIDE { return constantsHost_.varMin_; }
-    void setVarMin(double varMin) CV_OVERRIDE { constantsHost_.varMin_ = ::fminf((float)varMin, constantsHost_.varMax_); }
+    void setVarMin(double varMin) CV_OVERRIDE { constantsHost_.varMin_ = ::fminf((float)varMin, constantsHost_.varMax_); constantsDirty_ = true; }
 
     double getVarMax() const CV_OVERRIDE { return constantsHost_.varMax_; }
-    void setVarMax(double varMax) CV_OVERRIDE { constantsHost_.varMax_ = ::fmaxf(constantsHost_.varMin_, (float)varMax); }
+    void setVarMax(double varMax) CV_OVERRIDE { constantsHost_.varMax_ = ::fmaxf(constantsHost_.varMin_, (float)varMax); constantsDirty_ = true; }
 
     double getComplexityReductionThreshold() const CV_OVERRIDE { return ct_; }
     void setComplexityReductionThreshold(double ct) CV_OVERRIDE { ct_ = (float)ct; }
@@ -121,16 +127,18 @@ public:
     void setDetectShadows(bool detectShadows) CV_OVERRIDE { detectShadows_ = detectShadows; }
 
     int getShadowValue() const CV_OVERRIDE { return constantsHost_.shadowVal_; }
-    void setShadowValue(int value) CV_OVERRIDE { constantsHost_.shadowVal_ = (uchar)value; }
+    void setShadowValue(int value) CV_OVERRIDE { constantsHost_.shadowVal_ = (uchar)value; constantsDirty_ = true; }
 
     double getShadowThreshold() const CV_OVERRIDE { return constantsHost_.tau_; }
-    void setShadowThreshold(double threshold) CV_OVERRIDE { constantsHost_.tau_ = (float)threshold; }
+    void setShadowThreshold(double threshold) CV_OVERRIDE { constantsHost_.tau_ = (float)threshold; constantsDirty_ = true; }
 
 private:
+    void uploadConstants(Stream &stream) const;
     void initialize(Size frameSize, int frameType, Stream &stream);
 
     Constants constantsHost_;
     Constants *constantsDevice_;
+    mutable bool constantsDirty_;
 
     int history_;
     float ct_;
@@ -148,7 +156,7 @@ private:
     GpuMat bgmodelUsedModes_;
 };
 
-MOG2Impl::MOG2Impl(int history, double varThreshold, bool detectShadows) : frameSize_(0, 0), frameType_(0), nframes_(0)
+MOG2Impl::MOG2Impl(int history, double varThreshold, bool detectShadows) : constantsDirty_(true), frameSize_(0, 0), frameType_(0), nframes_(0)
 {
     history_ = history > 0 ? history : defaultHistory;
     detectShadows_ = detectShadows;
@@ -171,6 +179,15 @@ MOG2Impl::MOG2Impl(int history, double varThreshold, bool detectShadows) : frame
 MOG2Impl::~MOG2Impl()
 {
     cudaFree(constantsDevice_);
+}
+
+void MOG2Impl::uploadConstants(Stream &stream) const
+{
+    if (!constantsDirty_)
+        return;
+
+    cudaSafeCall(cudaMemcpyAsync(constantsDevice_, &constantsHost_, sizeof(Constants), cudaMemcpyHostToDevice, StreamAccessor::getStream(stream)));
+    constantsDirty_ = false;
 }
 
 void MOG2Impl::apply(InputArray image, OutputArray fgmask, double learningRate)
@@ -215,6 +232,8 @@ void MOG2Impl::apply(InputArray _frame, OutputArray _fgmask, double learningRate
     learningRate = learningRate >= 0 && nframes_ > 1 ? learningRate : 1.0 / std::min(2 * nframes_, history_);
     CV_Assert(learningRate >= 0);
 
+    uploadConstants(stream);
+
     mog2_gpu(frame, frame.channels(), fgmask, bgmodelUsedModes_, weight_, variance_, mean_,
              (float)learningRate, static_cast<float>(-learningRate * ct_), detectShadows_, constantsDevice_, StreamAccessor::getStream(stream));
 }
@@ -230,6 +249,8 @@ void MOG2Impl::getBackgroundImage(OutputArray _backgroundImage, Stream &stream) 
 
     _backgroundImage.create(frameSize_, frameType_);
     GpuMat backgroundImage = _backgroundImage.getGpuMat();
+
+    uploadConstants(stream);
 
     getBackgroundImage2_gpu(backgroundImage.channels(), bgmodelUsedModes_, weight_, mean_, backgroundImage, constantsDevice_, StreamAccessor::getStream(stream));
 }
@@ -259,7 +280,8 @@ void MOG2Impl::initialize(cv::Size frameSize, int frameType, Stream &stream)
     bgmodelUsedModes_.create(frameSize_, CV_8UC1);
     bgmodelUsedModes_.setTo(Scalar::all(0));
 
-    cudaSafeCall(cudaMemcpyAsync(constantsDevice_, &constantsHost_, sizeof(Constants), cudaMemcpyHostToDevice, StreamAccessor::getStream(stream)));
+    constantsDirty_ = true;
+    uploadConstants(stream);
 }
 } // namespace
 
