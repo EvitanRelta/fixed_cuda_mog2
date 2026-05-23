@@ -49,7 +49,7 @@
 
 #include "mog2.hpp"
 
-namespace custom_mog2
+namespace fixed_cuda_mog2
 {
 namespace device
 {
@@ -413,6 +413,6 @@ void getBackgroundImage2_gpu(int cn, PtrStepSzb modesUsed, PtrStepSzf weight, Pt
 }
 } // namespace mog2
 } // namespace device
-} // namespace custom_mog2
+} // namespace fixed_cuda_mog2
 
 #endif /* CUDA_DISABLER */

@@ -122,7 +122,7 @@ CV_EXPORTS_W Ptr<cuda::BackgroundSubtractorMOG>
 
 }} // namespace cv { namespace cuda {
 
-namespace custom_mog2 {
+namespace fixed_cuda_mog2 {
 
 ////////////////////////////////////////////////////
 // MOG2
@@ -165,6 +165,6 @@ CV_EXPORTS_W cv::Ptr<BackgroundSubtractorMOG2>
     createBackgroundSubtractorMOG2(int history = 500, double varThreshold = 16,
                                    bool detectShadows = true);
 
-} // namespace custom_mog2
+} // namespace fixed_cuda_mog2
 
 #endif /* OPENCV_CUDABGSEGM_HPP */

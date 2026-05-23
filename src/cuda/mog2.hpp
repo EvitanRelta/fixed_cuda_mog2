@@ -10,7 +10,7 @@
 struct CUstream_st;
 typedef struct CUstream_st *cudaStream_t;
 
-namespace custom_mog2 { namespace device { namespace mog2 {
+namespace fixed_cuda_mog2 { namespace device { namespace mog2 {
 
 using cv::cuda::PtrStepSzb;
 using cv::cuda::PtrStepSzf;
