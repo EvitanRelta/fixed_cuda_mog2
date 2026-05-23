@@ -21,7 +21,7 @@ Drop-in replacement — use `fixed_cuda_mog2::BackgroundSubtractorMOG2` instead 
 `cv::cuda::BackgroundSubtractorMOG2`:
 
 ```cpp
-#include <opencv2/cudabgsegm.hpp>
+#include <fixed_cuda_mog2/cudabgsegm.hpp>
 
 auto mog2 = fixed_cuda_mog2::createBackgroundSubtractorMOG2();
 mog2->apply(frame, fgmask, learningRate, stream);

@@ -45,7 +45,7 @@
 
 #include <limits>
 
-#include "opencv2/cudabgsegm.hpp"
+#include "fixed_cuda_mog2/cudabgsegm.hpp"
 
 #include "opencv2/core.hpp"
 #include "opencv2/core/cuda.hpp"
