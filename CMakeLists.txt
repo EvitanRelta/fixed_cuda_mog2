@@ -38,6 +38,7 @@ target_link_libraries(fixed_cuda_mog2
 
 set_target_properties(fixed_cuda_mog2 PROPERTIES
     CUDA_SEPARABLE_COMPILATION ON
+    CUDA_RESOLVE_DEVICE_SYMBOLS ON
 )
 
 add_library(fixed_cuda_mog2::fixed_cuda_mog2 ALIAS fixed_cuda_mog2)
