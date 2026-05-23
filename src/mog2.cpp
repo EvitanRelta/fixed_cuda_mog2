@@ -40,9 +40,12 @@
 //
 //M*/
 
-#include "precomp.hpp"
+
+#include "fixed_cuda_mog2/cudabgsegm.hpp"
+#include "opencv2/core/cuda.hpp"
+#include "opencv2/core/cuda/common.hpp"
+#include "opencv2/core/cuda_stream_accessor.hpp"
 #include "cuda/mog2.hpp"
-#include "opencv2/core/utils/logger.hpp"
 
 using namespace cv;
 using namespace cv::cuda;
