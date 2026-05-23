@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.16)
 
-project(mog2_cuda_fix LANGUAGES CXX CUDA)
+project(fixed_cuda_mog2 LANGUAGES CXX CUDA)
 
 set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -15,14 +15,14 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS
 find_package(CUDA REQUIRED)
 find_package(OpenCV REQUIRED COMPONENTS core video cudaarithm)
 
-add_library(mog2_cuda STATIC
+add_library(fixed_cuda_mog2 STATIC
     src/mog2.cpp
     src/cuda/mog2.cu
 )
 
-target_compile_definitions(mog2_cuda PRIVATE HAVE_CUDA)
+target_compile_definitions(fixed_cuda_mog2 PRIVATE HAVE_CUDA)
 
-target_include_directories(mog2_cuda
+target_include_directories(fixed_cuda_mog2
     PUBLIC
         src/include
     PRIVATE
@@ -30,12 +30,14 @@ target_include_directories(mog2_cuda
         ${CUDA_INCLUDE_DIRS}
 )
 
-target_link_libraries(mog2_cuda
+target_link_libraries(fixed_cuda_mog2
     PUBLIC
         ${OpenCV_LIBS}
         ${CUDA_LIBRARIES}
 )
 
-set_target_properties(mog2_cuda PROPERTIES
+set_target_properties(fixed_cuda_mog2 PROPERTIES
     CUDA_SEPARABLE_COMPILATION ON
 )
+
+add_library(fixed_cuda_mog2::fixed_cuda_mog2 ALIAS fixed_cuda_mog2)
