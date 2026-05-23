@@ -15,6 +15,8 @@ device before each `apply()` / `getBackgroundImage()` call.
 `setNMixtures()` also now throws if called after initialization, since changing
 the number of mixtures requires reallocating GPU memory.
 
+Changes for the fix is in commit [7089728](https://github.com/EvitanRelta/fixed_cuda_mog2/commit/7089728a7d99c79fd2f79640f269b949d9bd5263).
+
 ## Usage
 
 Copy the `fixed_cuda_mog2` directory into your project (e.g. as a git submodule)
@@ -33,7 +35,7 @@ Drop-in replacement — use `fixed_cuda_mog2::BackgroundSubtractorMOG2` instead 
 
 auto mog2 = fixed_cuda_mog2::createBackgroundSubtractorMOG2();
 mog2->apply(frame, fgmask, learningRate, stream);
-mog2->setBackgroundRatio(0.5);  // now actually works
+mog2->setBackgroundRatio(0.5);  // now actually works after MOG2 has initialized
 ```
 
 ## Dependencies
