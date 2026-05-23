@@ -24,7 +24,7 @@ target_compile_definitions(fixed_cuda_mog2 PRIVATE HAVE_CUDA)
 
 target_include_directories(fixed_cuda_mog2
     PUBLIC
-        src/include
+        include
     PRIVATE
         src
         ${CUDA_INCLUDE_DIRS}
