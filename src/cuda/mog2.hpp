@@ -2,8 +2,8 @@
 // It is subject to the license terms in the LICENSE file found in the top-level directory
 // of this distribution and at http://opencv.org/license.html.
 
-#ifndef OPENCV_CUDA_MOG2_H
-#define OPENCV_CUDA_MOG2_H
+#ifndef FIXED_CUDA_MOG2_MOG2_HPP
+#define FIXED_CUDA_MOG2_MOG2_HPP
 
 #include "opencv2/core/cuda.hpp"
 
@@ -33,4 +33,4 @@ void getBackgroundImage2_gpu(int cn, PtrStepSzb modesUsed, PtrStepSzf weight, Pt
 
 } } }
 
-#endif /* OPENCV_CUDA_MOG2_H */
+#endif /* FIXED_CUDA_MOG2_MOG2_HPP */

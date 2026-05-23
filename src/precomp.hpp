@@ -40,8 +40,8 @@
 //
 //M*/
 
-#ifndef OPENCV_PRECOMP_H
-#define OPENCV_PRECOMP_H
+#ifndef FIXED_CUDA_MOG2_PRECOMP_HPP
+#define FIXED_CUDA_MOG2_PRECOMP_HPP
 
 #include <limits>
 
@@ -52,6 +52,4 @@
 #include "opencv2/core/cuda/common.hpp"
 #include "opencv2/core/cuda_stream_accessor.hpp"
 
-#include "opencv2/opencv_modules.hpp"
-
-#endif /* OPENCV_PRECOMP_H */
+#endif /* FIXED_CUDA_MOG2_PRECOMP_HPP */

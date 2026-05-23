@@ -40,8 +40,8 @@
 //
 //M*/
 
-#ifndef OPENCV_CUDABGSEGM_HPP
-#define OPENCV_CUDABGSEGM_HPP
+#ifndef FIXED_CUDA_MOG2_CUDABGSEG_HPP
+#define FIXED_CUDA_MOG2_CUDABGSEG_HPP
 
 #ifndef __cplusplus
 #  error cudabgsegm.hpp header must be compiled as C++
@@ -56,71 +56,6 @@
     @defgroup cudabgsegm Background Segmentation
   @}
  */
-
-namespace cv { namespace cuda {
-
-//! @addtogroup cudabgsegm
-//! @{
-
-////////////////////////////////////////////////////
-// MOG
-
-/** @brief Gaussian Mixture-based Background/Foreground Segmentation Algorithm.
-
-The class discriminates between foreground and background pixels by building and maintaining a model
-of the background. Any pixel which does not fit this model is then deemed to be foreground. The
-class implements algorithm described in @cite MOG2001 .
-
-@sa BackgroundSubtractorMOG
-
-@note
-   -   An example on gaussian mixture based background/foreground segmantation can be found at
-        opencv_source_code/samples/gpu/bgfg_segm.cpp
- */
-class CV_EXPORTS_W BackgroundSubtractorMOG : public cv::BackgroundSubtractor
-{
-public:
-
-    using cv::BackgroundSubtractor::apply;
-    CV_WRAP virtual void apply(InputArray image, OutputArray fgmask, double learningRate, Stream& stream) = 0;
-
-    CV_WRAP virtual void apply(InputArray image, InputArray knownForegroundMask, OutputArray fgmask, double learningRate, Stream& stream) = 0;
-
-    using cv::BackgroundSubtractor::getBackgroundImage;
-    virtual void getBackgroundImage(OutputArray backgroundImage, Stream& stream) const = 0;
-
-    CV_WRAP inline void getBackgroundImage(CV_OUT GpuMat& backgroundImage, Stream& stream) {
-        getBackgroundImage(OutputArray(backgroundImage), stream);
-    }
-
-    CV_WRAP virtual int getHistory() const = 0;
-    CV_WRAP virtual void setHistory(int nframes) = 0;
-
-    CV_WRAP virtual int getNMixtures() const = 0;
-    CV_WRAP virtual void setNMixtures(int nmix) = 0;
-
-    CV_WRAP virtual double getBackgroundRatio() const = 0;
-    CV_WRAP virtual void setBackgroundRatio(double backgroundRatio) = 0;
-
-    CV_WRAP virtual double getNoiseSigma() const = 0;
-    CV_WRAP virtual void setNoiseSigma(double noiseSigma) = 0;
-};
-
-/** @brief Creates mixture-of-gaussian background subtractor
-
-@param history Length of the history.
-@param nmixtures Number of Gaussian mixtures.
-@param backgroundRatio Background ratio.
-@param noiseSigma Noise strength (standard deviation of the brightness or each color channel). 0
-means some automatic value.
- */
-CV_EXPORTS_W Ptr<cuda::BackgroundSubtractorMOG>
-    createBackgroundSubtractorMOG(int history = 200, int nmixtures = 5,
-                                  double backgroundRatio = 0.7, double noiseSigma = 0);
-
-//! @}
-
-}} // namespace cv { namespace cuda {
 
 namespace fixed_cuda_mog2 {
 
@@ -167,4 +102,4 @@ CV_EXPORTS_W cv::Ptr<BackgroundSubtractorMOG2>
 
 } // namespace fixed_cuda_mog2
 
-#endif /* OPENCV_CUDABGSEGM_HPP */
+#endif /* FIXED_CUDA_MOG2_CUDABGSEG_HPP */
