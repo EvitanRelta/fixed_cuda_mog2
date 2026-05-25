@@ -87,8 +87,10 @@ public:
     void apply(InputArray image, OutputArray fgmask, double learningRate = -1) CV_OVERRIDE;
     void apply(InputArray image, OutputArray fgmask, double learningRate, Stream &stream) CV_OVERRIDE;
 
+#if (CV_VERSION_MAJOR > 4 || (CV_VERSION_MAJOR == 4 && CV_VERSION_MINOR >= 13))
     void apply(InputArray image, InputArray knownForegroundMask, OutputArray fgmask, double learningRate = -1) CV_OVERRIDE;
     void apply(InputArray image, InputArray knownForegroundMask, OutputArray fgmask, double learningRate, Stream& stream) CV_OVERRIDE;
+#endif
 
     void getBackgroundImage(OutputArray backgroundImage) const CV_OVERRIDE;
     void getBackgroundImage(OutputArray backgroundImage, Stream &stream) const CV_OVERRIDE;
@@ -198,6 +200,7 @@ void MOG2Impl::apply(InputArray image, OutputArray fgmask, double learningRate)
     apply(image, fgmask, learningRate, Stream::Null());
 }
 
+#if (CV_VERSION_MAJOR > 4 || (CV_VERSION_MAJOR == 4 && CV_VERSION_MINOR >= 13))
 void MOG2Impl::apply(InputArray _image, InputArray _knownForegroundMask, OutputArray _fgmask, double learningRate){
     if(!_knownForegroundMask.empty())
     {
@@ -213,6 +216,7 @@ void MOG2Impl::apply(InputArray _image, InputArray _knownForegroundMask, OutputA
     }
     apply(_image, _fgmask, learningRate, stream);
 }
+#endif
 
 void MOG2Impl::apply(InputArray _frame, OutputArray _fgmask, double learningRate, Stream &stream)
 {

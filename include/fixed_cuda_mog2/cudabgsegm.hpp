@@ -78,7 +78,9 @@ public:
 
     CV_WRAP virtual void apply(cv::InputArray image, cv::OutputArray fgmask, double learningRate, cv::cuda::Stream& stream) = 0;
 
+#if (CV_VERSION_MAJOR > 4 || (CV_VERSION_MAJOR == 4 && CV_VERSION_MINOR >= 13))
     CV_WRAP virtual void apply(cv::InputArray image, cv::InputArray knownForegroundMask, cv::OutputArray fgmask, double learningRate, cv::cuda::Stream& stream) = 0;
+#endif
 
     virtual void getBackgroundImage(cv::OutputArray backgroundImage, cv::cuda::Stream& stream) const = 0;
 
